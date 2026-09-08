@@ -9,6 +9,7 @@ import type { Key } from '../../src/i18n';
 
 const TABS: { name: string; icon: IconName; label: Key }[] = [
   { name: 'index', icon: 'message', label: 'tab_chat' },
+  { name: 'agent', icon: 'terminal', label: 'tab_agent' },
   { name: 'battle', icon: 'swords', label: 'tab_battle' },
   { name: 'leaderboard', icon: 'trophy', label: 'tab_ranks' },
   { name: 'pulse', icon: 'pulse', label: 'tab_pulse' },
@@ -27,7 +28,7 @@ function TabBar({ state, navigation }: any) {
         borderTopColor: theme.stroke,
         paddingBottom: Math.max(insets.bottom, 8),
         paddingTop: 9,
-        paddingHorizontal: 6,
+        paddingHorizontal: 2,
       }}
     >
       {state.routes.map((route: any, index: number) => {
@@ -46,7 +47,7 @@ function TabBar({ state, navigation }: any) {
           >
             <View
               style={{
-                paddingHorizontal: 14,
+                paddingHorizontal: 11,
                 paddingVertical: 5,
                 borderRadius: 999,
                 backgroundColor: focused ? theme.accentSoft : 'transparent',

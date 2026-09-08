@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { ScrollView, StyleSheet, Switch, TextInput, View } from 'react-native';
+import { Image, ScrollView, StyleSheet, Switch, TextInput, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -12,7 +12,19 @@ import { radius } from '../../src/theme';
 import type { Lang } from '../../src/i18n';
 
 export default function You() {
-  const { theme, t, lang, state, setSettings, reset, buzz, personalRanking, agreement, deleteChat } = useApp();
+  const {
+    theme,
+    t,
+    lang,
+    state,
+    setSettings,
+    reset,
+    buzz,
+    personalRanking,
+    agreement,
+    deleteChat,
+    signOut,
+  } = useApp();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const [q, setQ] = useState('');
@@ -58,12 +70,86 @@ export default function You() {
         {t('you_title')}
       </Txt>
 
+      {/* account */}
+      {state.user ? (
+        <Card style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+          {state.user.picture ? (
+            <Image
+              source={{ uri: state.user.picture }}
+              style={{ width: 46, height: 46, borderRadius: 23, backgroundColor: theme.chip }}
+            />
+          ) : (
+            <View
+              style={{
+                width: 46,
+                height: 46,
+                borderRadius: 23,
+                backgroundColor: theme.accentSoft,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Icon name="user" size={20} color={theme.accent} />
+            </View>
+          )}
+          <View style={{ flex: 1 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7 }}>
+              <Txt size={15.5} weight="800" numberOfLines={1}>
+                {state.user.name}
+              </Txt>
+              {state.user.provider === 'demo' && <Badge text="DEMO" color={theme.warn} bg={`${theme.warn}1A`} />}
+            </View>
+            <Txt size={11.5} faint numberOfLines={1}>
+              {state.user.email}
+            </Txt>
+          </View>
+          <Tap
+            onPress={() => {
+              signOut();
+              buzz('warning');
+            }}
+          >
+            <View style={{ paddingHorizontal: 12, paddingVertical: 8, borderRadius: radius.pill, backgroundColor: theme.chip }}>
+              <Txt size={12} weight="700" dim>
+                {t('sign_out')}
+              </Txt>
+            </View>
+          </Tap>
+        </Card>
+      ) : (
+        <Tap onPress={() => router.push('/signin')}>
+          <Card style={{ flexDirection: 'row', alignItems: 'center', gap: 12, borderColor: `${theme.accent}55` }}>
+            <View
+              style={{
+                width: 42,
+                height: 42,
+                borderRadius: 14,
+                backgroundColor: theme.accentSoft,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Icon name="user" size={19} color={theme.accent} />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Txt size={14.5} weight="800">
+                {t('sign_in')}
+              </Txt>
+              <Txt size={11.5} faint numberOfLines={2} style={{ lineHeight: 16 }}>
+                {t('auth_sub')}
+              </Txt>
+            </View>
+            <Icon name="chevron-right" size={16} color={theme.textFaint} />
+          </Card>
+        </Tap>
+      )}
+
       {/* stats */}
       <View style={{ flexDirection: 'row', gap: 8 }}>
         {[
           { icon: 'swords', value: `${state.votes.length}`, label: t('battles_played') },
           { icon: 'message', value: `${messages}`, label: t('messages_sent') },
-          { icon: 'flame', value: `${state.streakDays}`, label: t('streak') },
+          { icon: 'terminal', value: `${state.agentSessions.length}`, label: t('agent_sessions') },
           { icon: 'shield', value: agreement === null ? '—' : `${agreement}%`, label: t('agreement') },
         ].map((s) => (
           <Card key={s.label} style={{ flex: 1, padding: 11, gap: 5, alignItems: 'flex-start' }}>

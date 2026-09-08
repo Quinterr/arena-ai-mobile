@@ -64,6 +64,8 @@ function Navigator() {
         >
           <Stack.Screen name="(tabs)" />
           <Stack.Screen name="chat/[id]" />
+          <Stack.Screen name="agent/[id]" />
+          <Stack.Screen name="signin" options={{ presentation: 'modal', animation: 'slide_from_bottom' }} />
           <Stack.Screen name="model/[id]" options={{ presentation: 'modal', animation: 'slide_from_bottom' }} />
           <Stack.Screen name="compare" options={{ presentation: 'modal', animation: 'slide_from_bottom' }} />
         </Stack>

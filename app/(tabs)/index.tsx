@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import {
+  Image,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -86,10 +87,30 @@ export default function ChatHome() {
               <Icon name="scale" size={17} color={theme.textDim} />
             </View>
           </Tap>
-          <Tap onPress={() => router.push('/you')}>
-            <View style={{ padding: 8, borderRadius: 999, backgroundColor: theme.chip }}>
-              <Icon name="settings" size={17} color={theme.textDim} />
-            </View>
+          <Tap onPress={() => router.push(state.user ? '/you' : '/signin')}>
+            {state.user?.picture ? (
+              <Image
+                source={{ uri: state.user.picture }}
+                style={{ width: 33, height: 33, borderRadius: 999, backgroundColor: theme.chip }}
+              />
+            ) : (
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: 6,
+                  paddingHorizontal: 11,
+                  paddingVertical: 8,
+                  borderRadius: 999,
+                  backgroundColor: theme.chip,
+                }}
+              >
+                <Icon name="user" size={15} color={theme.textDim} />
+                <Txt size={12.5} weight="700" dim>
+                  {t('sign_in')}
+                </Txt>
+              </View>
+            )}
           </Tap>
         </View>
 
@@ -197,6 +218,43 @@ export default function ChatHome() {
               </View>
             )}
           </Card>
+        </View>
+
+        {/* agent mode entry */}
+        <View style={{ paddingHorizontal: 16, marginTop: 12 }}>
+          <Tap onPress={() => router.push('/agent')}>
+            <Card
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: 12,
+                borderColor: `${theme.lime}44`,
+                backgroundColor: theme.surface,
+              }}
+            >
+              <View
+                style={{
+                  width: 36,
+                  height: 36,
+                  borderRadius: 12,
+                  backgroundColor: `${theme.lime}1A`,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Icon name="terminal" size={18} color={theme.lime} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Txt size={14.5} weight="800">
+                  {t('agent_title')}
+                </Txt>
+                <Txt size={11.5} faint numberOfLines={2} style={{ lineHeight: 16 }}>
+                  {t('agent_sub')} {t('agent_capabilities')}
+                </Txt>
+              </View>
+              <Icon name="chevron-right" size={16} color={theme.textFaint} />
+            </Card>
+          </Tap>
         </View>
 
         {/* suggestions */}

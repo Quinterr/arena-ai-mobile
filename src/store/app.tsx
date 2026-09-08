@@ -15,6 +15,8 @@ import { themes, type Scheme, type Theme } from '../theme';
 import { translate, type Key, type Lang } from '../i18n';
 import { MODELS, type Category } from '../data/models';
 import * as elo from '../lib/elo';
+import type { Account } from '../lib/auth';
+import type { AgentSession } from '../lib/agent';
 
 export type Msg = {
   id: string;
@@ -55,6 +57,8 @@ type Settings = {
 type State = {
   ready: boolean;
   settings: Settings;
+  user: Account | null;
+  agentSessions: AgentSession[];
   chats: Chat[];
   votes: Vote[];
   personalElo: Record<string, number>;
@@ -66,6 +70,8 @@ type State = {
 
 const DEFAULTS: State = {
   ready: false,
+  user: null,
+  agentSessions: [],
   settings: {
     themePref: 'dark',
     lang: 'en',
@@ -84,6 +90,10 @@ const DEFAULTS: State = {
 
 type Action =
   | { type: 'hydrate'; payload: Partial<State> }
+  | { type: 'signIn'; user: Account }
+  | { type: 'signOut' }
+  | { type: 'upsertAgent'; session: AgentSession }
+  | { type: 'deleteAgent'; id: string }
   | { type: 'settings'; payload: Partial<Settings> }
   | { type: 'upsertChat'; chat: Chat }
   | { type: 'deleteChat'; id: string }
@@ -98,6 +108,16 @@ function reducer(state: State, action: Action): State {
       return { ...state, ...action.payload, ready: true };
     case 'settings':
       return { ...state, settings: { ...state.settings, ...action.payload } };
+    case 'signIn':
+      return { ...state, user: action.user };
+    case 'signOut':
+      return { ...state, user: null };
+    case 'upsertAgent': {
+      const rest = state.agentSessions.filter((s) => s.id !== action.session.id);
+      return { ...state, agentSessions: [action.session, ...rest].slice(0, 40) };
+    }
+    case 'deleteAgent':
+      return { ...state, agentSessions: state.agentSessions.filter((s) => s.id !== action.id) };
     case 'upsertChat': {
       const rest = state.chats.filter((c) => c.id !== action.chat.id);
       return { ...state, chats: [action.chat, ...rest].slice(0, 60) };
@@ -146,6 +166,10 @@ type Ctx = {
   lang: Lang;
   setSettings: (p: Partial<Settings>) => void;
   upsertChat: (c: Chat) => void;
+  signIn: (u: Account) => void;
+  signOut: () => void;
+  upsertAgentSession: (s: AgentSession) => void;
+  deleteAgentSession: (id: string) => void;
   deleteChat: (id: string) => void;
   addVote: (v: Vote) => void;
   toggleWatch: (id: string) => void;
@@ -243,6 +267,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       t: (k: Key) => translate(lang, k),
       setSettings: (p) => dispatch({ type: 'settings', payload: p }),
       upsertChat: (c) => dispatch({ type: 'upsertChat', chat: c }),
+      signIn: (u) => dispatch({ type: 'signIn', user: u }),
+      signOut: () => dispatch({ type: 'signOut' }),
+      upsertAgentSession: (s) => dispatch({ type: 'upsertAgent', session: s }),
+      deleteAgentSession: (id) => dispatch({ type: 'deleteAgent', id }),
       deleteChat: (id) => dispatch({ type: 'deleteChat', id }),
       addVote: (v) => dispatch({ type: 'vote', vote: v }),
       toggleWatch: (id) => dispatch({ type: 'toggleWatch', id }),

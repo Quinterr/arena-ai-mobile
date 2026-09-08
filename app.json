@@ -32,9 +32,18 @@
       "bundler": "metro",
       "output": "single"
     },
-    "plugins": ["expo-router"],
+    "plugins": [
+      "expo-router"
+    ],
     "experiments": {
       "typedRoutes": false
+    },
+    "extra": {
+      "google": {
+        "web": "REPLACE_ME.apps.googleusercontent.com",
+        "ios": "REPLACE_ME.apps.googleusercontent.com",
+        "android": "REPLACE_ME.apps.googleusercontent.com"
+      }
     }
   }
 }

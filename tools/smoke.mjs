@@ -13,7 +13,7 @@ import { JSDOM } from 'jsdom';
 const HOST = process.env.SMOKE_HOST ?? 'http://localhost:3000';
 const ROUTES = process.argv.slice(2).length
   ? process.argv.slice(2)
-  : ['/', '/battle', '/leaderboard', '/pulse', '/you', '/compare', '/model/claude-fable-5'];
+  : ['/', '/agent', '/battle', '/leaderboard', '/pulse', '/you', '/signin', '/compare', '/model/claude-fable-5'];
 
 const BUNDLE = `${HOST}/node_modules/expo-router/entry.bundle?platform=web&dev=true&hot=false&lazy=false&transform.engine=hermes&transform.routerRoot=app`;
 

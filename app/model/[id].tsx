@@ -46,6 +46,8 @@ export default function ModelDetail() {
   }
 
   const watched = state.watchlist.includes(model.id);
+  const mySessions = state.agentSessions.filter((s) => s.modelId === model.id);
+  const myConfirmed = mySessions.filter((s) => s.outcome === 'confirmed').length;
   const color = labColors[model.lab] ?? theme.accent;
   const personal = personalRanking.find((p) => p.id === model.id);
 
@@ -238,6 +240,23 @@ export default function ModelDetail() {
             ))}
           </Card>
         </View>
+
+        {mySessions.length > 0 ? (
+          <Card tone="alt" style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Icon name="terminal" size={18} color={theme.lime} />
+            <View style={{ flex: 1 }}>
+              <Txt size={13} weight="700">
+                {t('agent_sessions')}
+              </Txt>
+              <Txt size={11.5} faint>
+                {myConfirmed}/{mySessions.length} {t('agent_confirmed').toLowerCase()}
+              </Txt>
+            </View>
+            <Txt size={19} weight="800" mono color={theme.lime}>
+              {mySessions.length}
+            </Txt>
+          </Card>
+        ) : null}
 
         {personal ? (
           <Card tone="alt" style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
